@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ShoppingApi.Services
 {
-    public class EfSqlShopping : ILookupProducts
+    public class EfSqlShopping : ILookupProducts, IPerformProductCommands
     {
         private readonly ShoppingDataContext _context;
         private readonly IMapper _mapper;
@@ -20,6 +20,22 @@ namespace ShoppingApi.Services
             _context = context;
             _mapper = mapper;
             _mapperConfig = mapperConfig;
+        }
+
+        public async Task<GetProductDetailsResponse> AddProduct(PostProductRequest productToAdd)
+        {
+            var product = _mapper.Map<Product>(productToAdd);
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<GetProductDetailsResponse>(product);
+        }
+
+        public async Task<GetProductDetailsResponse> GetbyId(int id)
+        {
+            return await _context.GetItemsInInventory()
+                .Where(p => p.Id == id)
+                .ProjectTo<GetProductDetailsResponse>(_mapperConfig)
+                .SingleOrDefaultAsync();
         }
 
         public async Task<GetProductsResponse> GetSummary()
@@ -36,7 +52,7 @@ namespace ShoppingApi.Services
 
         public async Task<GetProductListSummary> GetSummaryList(string category)
         {
-            var list = await _context.Products.Where(p => p.Category == category && p.InInventory)
+            var list = await _context.GetItemsFromCategory(category)
                 .ProjectTo<ProductSummaryItem>(_mapperConfig)
                 .ToListAsync();
 

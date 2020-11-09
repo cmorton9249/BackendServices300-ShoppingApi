@@ -21,5 +21,12 @@ namespace ShoppingApi.Data
         }
 
         public DbSet<Product> Products { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Product>().Property(p => p.Category).HasMaxLength(100);
+            modelBuilder.Entity<Product>().Property(p => p.Description).HasMaxLength(200);
+            modelBuilder.Entity<Product>().Property(p => p.UnitPrice).HasColumnType("decimal(18,2)");
+        }
     }
 }

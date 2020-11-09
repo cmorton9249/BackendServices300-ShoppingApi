@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using ShoppingApi.Data;
 using ShoppingApi.Profiles;
 using ShoppingApi.Services;
+using System.Net.Security;
 
 namespace ShoppingApi
 {
@@ -30,6 +31,8 @@ namespace ShoppingApi
             });
 
             services.AddScoped<ILookupProducts, EfSqlShopping>();
+            services.AddScoped<IPerformProductCommands, EfSqlShopping>();
+
             var mapperConfig = new MapperConfiguration(opt =>
             {
                 opt.AddProfile(new ProductProfile());
