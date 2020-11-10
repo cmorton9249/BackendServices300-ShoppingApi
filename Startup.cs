@@ -33,10 +33,18 @@ namespace ShoppingApi
             services.AddScoped<ILookupProducts, EfSqlShopping>();
             services.AddScoped<IPerformProductCommands, EfSqlShopping>();
 
+
+            var pricingConfig = new PricingConfiguration();
+            //Hydrate the configuration object
+            Configuration.GetSection(pricingConfig.SectionName).Bind(pricingConfig);
+            // Makes this injectable into services using IOptions<T>
+            services.Configure<PricingConfiguration>(Configuration.GetSection(pricingConfig.SectionName));
+
             var mapperConfig = new MapperConfiguration(opt =>
             {
-                opt.AddProfile(new ProductProfile());
+                opt.AddProfile(new ProductProfile(pricingConfig));
             });
+
             IMapper mapper = mapperConfig.CreateMapper();
             services.AddSingleton<IMapper>(mapper);
             services.AddSingleton<MapperConfiguration>(mapperConfig);
