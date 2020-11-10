@@ -21,6 +21,7 @@ namespace ShoppingApi.Data
         }
 
         public DbSet<Product> Products { get; set; }
+        public DbSet<CurbsideOrder> CurbsideOrders { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
