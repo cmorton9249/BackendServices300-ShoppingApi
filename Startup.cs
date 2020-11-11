@@ -41,12 +41,17 @@ namespace ShoppingApi
             services.AddHostedService<CurbsideOrderProcessor>();
             services.AddSingleton<CurbsideChannel>();
 
+			services.AddScoped<IGenerateCurbsidePickupTimes, GrpcPickupEstimator>();
+
 
             var pricingConfig = new PricingConfiguration();
             //Hydrate the configuration object
             Configuration.GetSection(pricingConfig.SectionName).Bind(pricingConfig);
             // Makes this injectable into services using IOptions<T>
             services.Configure<PricingConfiguration>(Configuration.GetSection(pricingConfig.SectionName));
+
+            var pickupConfig = new PickupEstimatorConfiguration();
+            services.Configure<PickupEstimatorConfiguration>(Configuration.GetSection(pickupConfig.SectionName));
 
             var mapperConfig = new MapperConfiguration(opt =>
             {

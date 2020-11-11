@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\dev\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: sql
+  name: sql
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: sql
+  strategy: {}
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\dev\kompose.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/my-network: "true"
+        io.kompose.service: sql
+    spec:
+      containers:
+      - image: cmorton9249/shopping-sql-nov-2020
+        imagePullPolicy: ""
+        name: sql
+        ports:
+        - containerPort: 1433
+        resources: {}
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes: null
+status: {}

@@ -1,0 +1,42 @@
+version: "3.7"
+services:
+  api:
+    image: cmorton9249/shopping-api-nov-2020
+    ports:
+      - 80:80
+    networks:
+      - my-network
+    environment: 
+      - ConnectionStrings__shopping=server=sql;database=shopping;user=sa;password=TokyoJoe138!
+      - Pricing:Markup=1.00
+      - PickupEstimator:url=https://pickup
+  
+  sql:
+    image: cmorton9249/shopping-sql-nov-2020
+    networks:
+      - my-network
+    ports:
+      - 1433:1433
+  pickup:
+    image: cmorton9249/pickup-service-nov-2020
+    ports:
+      - 8080:80
+      - 443:443
+    environment: 
+      - ASPNETCORE_HTTPS_PORT=80
+      - ASPNETCORE_Kestrel_Certificates_Default_Password="TokyoJoe138!"
+      - ASPNETCORE_Kestrel_Certificates_Default_Path=\https\aspnetapp.pfx
+    volumes:
+      - ${HOME}/.aspnet/https:/https/
+    networks:
+      - my-network
+  seq:
+  # docker run --name seq -d --restart unless-stopped -e ACCEPT_EULA=Y -p 5341:80 datalust/seq:latest
+    image: datalust/seq:latest
+    environment: 
+      - ACCEPT_EULA=Y
+    ports:
+      - 5342:80
+networks:
+  my-network:
+    driver: bridge

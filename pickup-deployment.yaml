@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: C:\dev\kompose.exe convert
+    kompose.version: 1.21.0 (992df58d8)
+  creationTimestamp: null
+  labels:
+    io.kompose.service: pickup
+  name: pickup
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: pickup
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: C:\dev\kompose.exe convert
+        kompose.version: 1.21.0 (992df58d8)
+      creationTimestamp: null
+      labels:
+        io.kompose.network/my-network: "true"
+        io.kompose.service: pickup
+    spec:
+      containers:
+      - env:
+        - name: ASPNETCORE_HTTPS_PORT
+          value: "80"
+        - name: ASPNETCORE_Kestrel_Certificates_Default_Password
+          value: '"TokyoJoe138!"'
+        - name: ASPNETCORE_Kestrel_Certificates_Default_Path
+          value: \https\aspnetapp.pfx
+        image: cmorton9249/pickup-service-nov-2020
+        imagePullPolicy: ""
+        name: pickup
+        ports:
+        - containerPort: 80
+        - containerPort: 443
+        resources: {}
+        volumeMounts:
+        - mountPath: /https/
+          name: pickup-claim0
+      restartPolicy: Always
+      serviceAccountName: ""
+      volumes:
+      - name: pickup-claim0
+        persistentVolumeClaim:
+          claimName: pickup-claim0
+status: {}

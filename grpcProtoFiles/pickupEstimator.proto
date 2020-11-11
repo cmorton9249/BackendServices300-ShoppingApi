@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+option csharp_namespace = "PickupService";
+
+import "google/protobuf/timestamp.proto";
+
+message PickupRequest {
+	string For = 1;
+	repeated int32 items = 2;
+}
+
+message PickupResponse {
+	google.protobuf.Timestamp PickupTime = 1;
+}
+
+service PickupEstimator {
+	rpc GetPickupTime(PickupRequest) returns (PickupResponse);
+}

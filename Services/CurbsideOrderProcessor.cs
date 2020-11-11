@@ -41,7 +41,9 @@ namespace ShoppingApi.Services
 					await Task.Delay(1000); // It's important!
 					_logger.LogInformation($"Processed item {item} for order {order.OrderId}");
 				}
-				savedOrder.PickupReadyAt = DateTime.Now.AddDays(new Random().Next(1, 3));
+
+				var pickupGenerator = scope.ServiceProvider.GetRequiredService<IGenerateCurbsidePickupTimes>();
+				savedOrder.PickupReadyAt = await pickupGenerator.GetPickupDate(savedOrder);
 				await context.SaveChangesAsync();
 			}
 		}
